@@ -25,7 +25,7 @@ namespace UserAPI.Services
             {
                 Debug.WriteLine(e.Message);
                 Debug.WriteLine(item);
-            }
+            } 
             return null;
         }
 
