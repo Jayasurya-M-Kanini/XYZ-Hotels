@@ -49,7 +49,7 @@ namespace BookingAPI
 
             builder.Services.AddSwaggerGen(opt =>
             {
-                opt.SwaggerDoc("v1", new OpenApiInfo { Title = "User API", Version = "v1" });
+                opt.SwaggerDoc("v1", new OpenApiInfo { Title = "Booking API", Version = "v1" });
                 opt.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
                     In = ParameterLocation.Header,

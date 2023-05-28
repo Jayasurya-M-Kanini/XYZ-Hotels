@@ -45,26 +45,10 @@ namespace HotelAPI
             builder.Services.AddScoped<HotelServices>();
 
 
-            //// Configure the role based authentication
-
-            //builder.Services.AddAuthorization(options =>
-            //{
-            //    options.AddPolicy("StaffOnly", policy =>
-            //    {
-            //        policy.RequireRole("Staff");
-            //    });
-
-            //    options.AddPolicy("CustomerOnly", policy =>
-            //    {
-            //        policy.RequireRole("Customer");
-            //    });
-            //});
-
-            // Configure the Authorization button in swagger ui.
 
             builder.Services.AddSwaggerGen(opt =>
             {
-                opt.SwaggerDoc("v1", new OpenApiInfo { Title = "User API", Version = "v1" });
+                opt.SwaggerDoc("v1", new OpenApiInfo { Title = "Hotel API", Version = "v1" });
                 opt.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
                     In = ParameterLocation.Header,
