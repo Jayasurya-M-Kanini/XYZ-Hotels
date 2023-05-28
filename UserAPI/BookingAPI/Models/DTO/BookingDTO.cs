@@ -18,14 +18,14 @@ namespace BookingAPI.Models.DTO
 
 
         [Required]
-        public string CustomerName { get; set; }
+        public string? CustomerName { get; set; }
 
 
         [Required]
-        public String CheckInDate { get; set; }
+        public DateTime CheckInDate { get; set; }
 
 
         [Required]
-        public String CheckOutDate { get; set; }
+        public DateTime CheckOutDate { get; set; }
     }
 }

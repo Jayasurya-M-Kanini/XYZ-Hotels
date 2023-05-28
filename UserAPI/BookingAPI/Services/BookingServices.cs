@@ -13,25 +13,11 @@ namespace BookingAPI.Services
             _bookingRepo = bookingRepo;
         }
 
-            public Booking BookHotel(BookingDTO bookingDTO)
+            public Booking BookHotel(Booking booking)
             {
-                // Parse check-in and check-out dates
-                if (!DateTime.TryParseExact(bookingDTO.CheckInDate, "dd/MM/yyyy", null, System.Globalization.DateTimeStyles.None, out DateTime parsedCheckInDate)
-                    || !DateTime.TryParseExact(bookingDTO.CheckOutDate, "dd/MM/yyyy", null, System.Globalization.DateTimeStyles.None, out DateTime parsedCheckOutDate))
-                {
-                    return null;
-                }
-
                 // Validate if the same hotel has an existing reservation with overlapping dates
-                if (IsHotelAvailable(bookingDTO.HotelID, bookingDTO.RoomID, parsedCheckInDate, parsedCheckOutDate))
+                if (IsHotelAvailable(booking.HotelID, booking.RoomID, booking.CheckInDate, booking.CheckOutDate))
                 {
-                    var booking= new Booking();
-                    booking.HotelID = bookingDTO.HotelID;
-                    booking.RoomID = bookingDTO.RoomID;
-                    booking.HotelBranch= bookingDTO.HotelBranch;
-                    booking.BookingID = bookingDTO.BookingID;
-                    booking.CheckInDate= parsedCheckInDate;
-                    booking.CheckOutDate= parsedCheckOutDate;
                     var myBooking=_bookingRepo.Add(booking);
                     if(myBooking != null)
                     {
@@ -61,22 +47,17 @@ namespace BookingAPI.Services
             return null;
         }
 
-        public Booking Update(BookingDTO bookingDTO)
+        public Booking Update(Booking booking)
         {
-            var booking = new Booking();
-            booking.HotelID = bookingDTO.HotelID;
-            booking.RoomID = bookingDTO.RoomID;
-            booking.HotelBranch = bookingDTO.HotelBranch;
-            booking.BookingID = bookingDTO.BookingID;
-            if (!DateTime.TryParseExact(bookingDTO.CheckInDate, "dd/MM/yyyy", null, System.Globalization.DateTimeStyles.None, out DateTime parsedCheckInDate)
-            || !DateTime.TryParseExact(bookingDTO.CheckOutDate, "dd/MM/yyyy", null, System.Globalization.DateTimeStyles.None, out DateTime parsedCheckOutDate))
-            {
-                return null;
-            }
-            booking.CheckInDate = parsedCheckInDate;
-            booking.CheckOutDate = parsedCheckOutDate;
-            var myBooking = _bookingRepo.Update(booking);
-            if (booking != null)
+            var bookings = new Booking();
+            bookings.HotelID = booking.HotelID;
+            bookings.RoomID = booking.RoomID;
+            bookings.HotelBranch = booking.HotelBranch;
+            bookings.BookingID = booking.BookingID;
+            bookings.CheckInDate = booking.CheckInDate;
+            bookings.CheckOutDate = booking.CheckOutDate;
+            var myBooking = _bookingRepo.Update(bookings);
+            if (myBooking != null)
                 return booking;
             return null;
         }

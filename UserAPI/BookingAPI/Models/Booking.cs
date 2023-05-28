@@ -19,7 +19,7 @@ namespace BookingAPI.Models
 
 
         [Required]
-        public string CustomerName { get; set; }
+        public string? CustomerName { get; set; }
 
 
         [Required]

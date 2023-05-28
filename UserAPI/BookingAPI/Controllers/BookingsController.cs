@@ -21,10 +21,10 @@ namespace BookingAPI.Controllers
         [ProducesResponseType(typeof(Booking), StatusCodes.Status200OK)]//Success Response
         [ProducesResponseType(StatusCodes.Status404NotFound)]//Failure Response
         [HttpPost]
-        [Authorize]
-        public ActionResult<Booking> Room_Booking(BookingDTO bookingDTO)
+        //[Authorize]
+        public ActionResult<Booking> Room_Booking(Booking booking)
         {
-            var myReservation = _bookingServices.BookHotel(bookingDTO);
+            var myReservation = _bookingServices.BookHotel(booking);
             if (myReservation != null)
                 return Created("Room Booked Successfully", myReservation);
             return BadRequest("Unable to Book Room");
@@ -46,7 +46,7 @@ namespace BookingAPI.Controllers
         [ProducesResponseType(typeof(Booking), StatusCodes.Status200OK)]//Success Response
         [ProducesResponseType(StatusCodes.Status404NotFound)]//Failure Response
         [HttpPost]
-        [Authorize]
+        //[Authorize]
         public ActionResult<Booking> Get_Booking(IdDTO idDTO)
         {
             var reservation = _bookingServices.GetByID(idDTO);
@@ -58,7 +58,7 @@ namespace BookingAPI.Controllers
         [ProducesResponseType(typeof(List<Booking>), StatusCodes.Status200OK)]//Success Response
         [ProducesResponseType(StatusCodes.Status404NotFound)]//Failure Response
         [HttpGet]
-        [Authorize]
+        //[Authorize]
         public ActionResult<Booking> Get_All_Bookings()
         {
             var reservations = _bookingServices.GetAll();
@@ -70,19 +70,19 @@ namespace BookingAPI.Controllers
         [ProducesResponseType(typeof(Booking), StatusCodes.Status200OK)]//Success Response
         [ProducesResponseType(StatusCodes.Status404NotFound)]//Failure Response
         [HttpPost]
-        [Authorize]
-        public ActionResult<Booking> Update_Booking(BookingDTO bookingDTO)
+        //[Authorize]
+        public ActionResult<Booking> Update_Booking(Booking booking)
         {
-            var newReservation = _bookingServices.Update(bookingDTO);
+            var newReservation = _bookingServices.Update(booking);
             if (newReservation != null)
                 return Ok(newReservation);
-            return BadRequest($"There is No Bookings for the id: {bookingDTO.BookingID}");
+            return BadRequest($"There is No Bookings for the id: {booking.BookingID}");
         }
 
         [ProducesResponseType(typeof(Booking), StatusCodes.Status200OK)]//Success Response
         [ProducesResponseType(StatusCodes.Status404NotFound)]//Failure Response
         [HttpPost]
-        [Authorize]
+        //[Authorize]
         public ActionResult<Booking> ViewBookingByHotelID(IdDTO idDTO)
         {
             var newReservation = _bookingServices.BookedRoomsByHotel(idDTO);
