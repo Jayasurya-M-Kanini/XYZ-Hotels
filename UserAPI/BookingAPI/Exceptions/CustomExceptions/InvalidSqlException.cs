@@ -2,7 +2,7 @@
 {
     public class InvalidSqlException:Exception
     {
-        String message;
+        string message;
 
         public InvalidSqlException()
         {

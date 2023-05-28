@@ -84,14 +84,14 @@ namespace HotelAPI.Services
         //Available rooms Count from each hotel
         public CountDTO RoomCount(IdDTO hotelId)
         {
-            var hotels = _hotelRepo.GetAll().ToList();
+            var rooms= _roomRepo.GetAll().ToList();
             CountDTO countDTO = new CountDTO();
-            countDTO.Count=hotels.Where(h => h.HotelId == hotelId.Id).Count();
+            countDTO.Count=rooms.Where(h => h.HotelId == hotelId.Id).Count();
             return  countDTO;
         }
 
         //Filter by location
-        public List<Hotel> FilterHotelByLocation(LocationSearchDTO locationDTO)
+        public List<Hotel>? FilterHotelByLocation(LocationSearchDTO locationDTO)
         {
             var hotels = _hotelRepo.GetAll().ToList();
             var myHotels = hotels.Where(h => h.HotelLocation == locationDTO.Location).ToList();
@@ -121,7 +121,11 @@ namespace HotelAPI.Services
         {
             var rooms = _roomRepo.GetAll().ToList();
             var myRooms = rooms.Where(h => h.HotelId == hotelId.Id).ToList();
-            return myRooms;
+            if (myRooms != null)
+            {
+                return myRooms;
+            }
+            return null;
         }
 
         //Filter Room by type

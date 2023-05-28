@@ -16,6 +16,8 @@ namespace UserAPI.Services
             _repo = repo;
             _tokenService = tokenGenerate;
         }
+
+        //Method for Login
         public UserDTO Login(UserDTO userDTO)
         {
             UserDTO user = null;
@@ -37,6 +39,8 @@ namespace UserAPI.Services
             }
             return user;
         }
+
+        //Method for registration
         public UserDTO Register(UserRegisterDTO userDTO)
         {
             UserDTO user = null;

@@ -2,7 +2,7 @@
 {
     public class InvalidNullReferenceException:Exception
     {
-        String message;
+        string message;
 
         public InvalidNullReferenceException()
         {

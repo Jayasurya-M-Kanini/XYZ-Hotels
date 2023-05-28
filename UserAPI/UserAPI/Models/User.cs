@@ -26,7 +26,7 @@ namespace UserAPI.Models
         public string? Email { get; set; }
 
         [Required]
-        [Range(18,100,ErrorMessage ="Enter a valid age between 18-100")]
+        [Range(18, 100, ErrorMessage = "Enter a valid age between 18-100")]
         public int Age { get; set; }
 
         [Required]

@@ -84,7 +84,7 @@ namespace HotelAPI.Controllers
                 var hotel = _hotelServices.GetHotelById(idDTO);
                 if (hotel != null)
                     return Ok(hotel);
-                return NotFound("No Hotel available");
+                return NotFound(new Error(1,"No Hotel available"));
             }
             catch (InvalidArgumentNullException iane)
             {
@@ -222,8 +222,11 @@ namespace HotelAPI.Controllers
             {
                 var rooms = _hotelServices.GetRoomByHotelID(idDTO);
                 if (rooms != null)
+                {
                     return Ok(rooms);
-                return BadRequest(new Error(1,"No available rooms"));
+
+                }
+                return NotFound(new Error(1,"No available rooms"));
             }
             catch (InvalidArgumentNullException iane)
             {

@@ -124,9 +124,9 @@ namespace HotelAPI.Services
                 var hotel = _context.Hotels.FirstOrDefault(u => u.HotelId == item.HotelId);
                 if (hotel != null)
                 {
-                    hotel.HotelBranch = item.HotelBranch;
-                    hotel.HotelPhoneNumber = item.HotelPhoneNumber;
-                    hotel.HotelLocation = item.HotelLocation;
+                    hotel.HotelBranch = item.HotelBranch!=null?item.HotelBranch:hotel.HotelBranch;
+                    hotel.HotelPhoneNumber = item.HotelPhoneNumber!=null?item.HotelPhoneNumber:hotel.HotelPhoneNumber;
+                    hotel.HotelLocation = item.HotelLocation != null ? item.HotelLocation : hotel.HotelLocation;
                     _context.Hotels.Update(hotel);
                     _context.SaveChanges();
                     return hotel;
