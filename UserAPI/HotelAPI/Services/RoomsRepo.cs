@@ -1,6 +1,8 @@
-﻿using HotelAPI.Interfaces;
+﻿using HotelAPI.Exceptions.CustomExceptions;
+using HotelAPI.Interfaces;
 using HotelAPI.Models;
 using HotelAPI.Models.DTO;
+using Microsoft.Data.SqlClient;
 using System.Diagnostics;
 
 namespace HotelAPI.Services
@@ -17,15 +19,26 @@ namespace HotelAPI.Services
         {
             try
             {
-                _context.Room.Add(item);
-                _context.SaveChanges();
-                return item;
+                var room=_context.Room.Add(item);
+                if(room != null)
+                {
+                    _context.SaveChanges();
+                    return item;
+                }
+                return null;
             }
-            catch (Exception ex)
+            catch (NullReferenceException nre)
             {
-                Debug.WriteLine(ex.Message);
+                throw new InvalidNullReferenceException(nre.Message);
             }
-            return null;
+            catch (ArgumentNullException ane)
+            {
+                throw new InvalidArgumentNullException(ane.Message);
+            }
+            catch (SqlException se)
+            {
+                throw new InvalidSqlException(se.Message);
+            }
         }
 
         public Rooms Delete(IdDTO idDTO)
@@ -33,50 +46,107 @@ namespace HotelAPI.Services
             try
             {
                 var room = _context.Room.FirstOrDefault(u => u.RoomId == idDTO.Id);
-                _context.Room.Remove(room);
-                _context.SaveChanges();
-                return room;
+                if(room != null)
+                {
+                    _context.Room.Remove(room);
+                    _context.SaveChanges();
+                    return room;
+                }
+                return null;
             }
-            catch (Exception e)
+            catch (NullReferenceException nre)
             {
-                Debug.WriteLine(e.Message);
+                throw new InvalidNullReferenceException(nre.Message);
             }
-            return null;
+            catch (ArgumentNullException ane)
+            {
+                throw new InvalidArgumentNullException(ane.Message);
+            }
+            catch (SqlException se)
+            {
+                throw new InvalidSqlException(se.Message);
+            }
         }
 
         public Rooms Get(IdDTO idDTO)
         {
-            var room = _context.Room.FirstOrDefault(u => u.RoomId == idDTO.Id);
-            if (room == null)
+            try
             {
-                return null;
+                var room = _context.Room.FirstOrDefault(u => u.RoomId == idDTO.Id);
+                if (room == null)
+                {
+                    return null;
+                }
+                return room;
             }
-            return room;
+            catch (NullReferenceException nre)
+            {
+                throw new InvalidNullReferenceException(nre.Message);
+            }
+            catch (ArgumentNullException ane)
+            {
+                throw new InvalidArgumentNullException(ane.Message);
+            }
+            catch (SqlException se)
+            {
+                throw new InvalidSqlException(se.Message);
+            }
+
         }
 
         public ICollection<Rooms> GetAll()
         {
-            var rooms = _context.Room.ToList();
-            if (rooms != null )
-                return rooms;
-            return null;
+            try
+            {
+                var rooms = _context.Room.ToList();
+                if (rooms != null)
+                    return rooms;
+                return null;
+            }
+            catch (NullReferenceException nre)
+            {
+                throw new InvalidNullReferenceException(nre.Message);
+            }
+            catch (ArgumentNullException ane)
+            {
+                throw new InvalidArgumentNullException(ane.Message);
+            }
+            catch (SqlException se)
+            {
+                throw new InvalidSqlException(se.Message);
+            }
         }
 
         public Rooms Update(Rooms item)
         {
-            var room = _context.Room.FirstOrDefault(u => u.RoomId == item.RoomId);
-            if (room != null)
+            try
             {
-                room.Price = item.Price;
-                room.Type= item.Type;
-                room.Sharing=item.Sharing;
-                _context.Room.Update(room);
-                _context.SaveChanges();
-                return room;
+                var room = _context.Room.FirstOrDefault(u => u.RoomId == item.RoomId);
+                if (room != null)
+                {
+                    room.Price = item.Price;
+                    room.Type = item.Type;
+                    room.Sharing = item.Sharing;
+                    _context.Room.Update(room);
+                    _context.SaveChanges();
+                    return room;
+                }
+                else
+                {
+                    return null;
+                }
             }
-            else
+            catch (NullReferenceException nre)
             {
-                return null;
+                throw new InvalidNullReferenceException(nre.Message);
+            }
+            catch (ArgumentNullException ane)
+            {
+                throw new InvalidArgumentNullException(ane.Message);
+            }
+            catch (SqlException se)
+            {
+                throw new InvalidSqlException(se.Message);
             }
         }
     }

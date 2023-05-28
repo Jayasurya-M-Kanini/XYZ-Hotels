@@ -1,6 +1,8 @@
-﻿using BookingAPI.Interfaces;
+﻿using BookingAPI.Exceptions.CustomExceptions;
+using BookingAPI.Interfaces;
 using BookingAPI.Models;
 using BookingAPI.Models.DTO;
+using Microsoft.Data.SqlClient;
 using System.Diagnostics;
 
 namespace BookingAPI.Services
@@ -17,64 +19,136 @@ namespace BookingAPI.Services
         {
             try
             {
-                _context.Bookings.Add(item);
-                _context.SaveChanges();
-                return item;
+                var booking=_context.Bookings.Add(item);
+                if(booking != null)
+                {
+                    _context.SaveChanges();
+                    return item;
+                }
+                return null;
             }
-            catch (Exception e)
+            catch (NullReferenceException nre)
             {
-                Debug.WriteLine(e.Message);
+                throw new InvalidNullReferenceException(nre.Message);
             }
-            return null;
+            catch (ArgumentNullException ane)
+            {
+                throw new InvalidArgumentNullException(ane.Message);
+            }
+            catch (SqlException se)
+            {
+                throw new InvalidSqlException(se.Message);
+            }
         }
 
         public Booking Delete(IdDTO item)
         {
-            var bookings = _context.Bookings.ToList();
-            var myBookings = bookings.FirstOrDefault(r => r.BookingID == item.Id);
-            if (myBookings != null)
+            try
             {
-                _context.Bookings.Remove(myBookings);
-                _context.SaveChanges();
-                return myBookings;
+                var bookings = _context.Bookings.ToList();
+                var myBookings = bookings.FirstOrDefault(r => r.BookingID == item.Id);
+                if (myBookings != null)
+                {
+                    _context.Bookings.Remove(myBookings);
+                    _context.SaveChanges();
+                    return myBookings;
+                }
+                return null;
             }
-            return null;
+            catch (NullReferenceException nre)
+            {
+                throw new InvalidNullReferenceException(nre.Message);
+            }
+            catch (ArgumentNullException ane)
+            {
+                throw new InvalidArgumentNullException(ane.Message);
+            }
+            catch (SqlException se)
+            {
+                throw new InvalidSqlException(se.Message);
+            }
         }
 
         public Booking Get(IdDTO item)
         {
-            var booking = _context.Bookings.ToList();
-            var myBookings = booking.FirstOrDefault(r => r.BookingID == item.Id);
-            if (myBookings != null)
-                return myBookings;
-            return null;
+            try
+            {
+                var booking = _context.Bookings.ToList();
+                var myBookings = booking.FirstOrDefault(r => r.BookingID == item.Id);
+                if (myBookings != null)
+                    return myBookings;
+                return null;
+            }
+            catch (NullReferenceException nre)
+            {
+                throw new InvalidNullReferenceException(nre.Message);
+            }
+            catch (ArgumentNullException ane)
+            {
+                throw new InvalidArgumentNullException(ane.Message);
+            }
+            catch (SqlException se)
+            {
+                throw new InvalidSqlException(se.Message);
+            }
+
         }
 
         public ICollection<Booking> GetAll()
         {
-            var myBookings = _context.Bookings.ToList();
-            if(myBookings != null)
-                return myBookings;
-            return null;
+            try
+            {
+                var myBookings = _context.Bookings.ToList();
+                if (myBookings != null)
+                    return myBookings;
+                return null;
+            }
+            catch (NullReferenceException nre)
+            {
+                throw new InvalidNullReferenceException(nre.Message);
+            }
+            catch (ArgumentNullException ane)
+            {
+                throw new InvalidArgumentNullException(ane.Message);
+            }
+            catch (SqlException se)
+            {
+                throw new InvalidSqlException(se.Message);
+            }
         }
 
         public Booking Update(Booking item)
         {
-            var booking = _context.Bookings.ToList();
-            var myBookings = booking.FirstOrDefault(r => r.BookingID == item.BookingID);
-            if (myBookings != null)
+            try
             {
-                myBookings.BookingID = item.BookingID != 0 ? item.BookingID : myBookings.BookingID;
-                myBookings.RoomID = item.RoomID != 0 ? item.RoomID : myBookings.RoomID;
-                myBookings.HotelID = item.HotelID != 0 ? item.HotelID : myBookings.HotelID;
-                myBookings.BookingID = item.BookingID != 0 ? item.BookingID : myBookings.BookingID;
-                myBookings.CheckInDate = item.CheckInDate != default(DateTime) ? item.CheckInDate : myBookings.CheckInDate;
-                myBookings.CheckOutDate = item.CheckOutDate != default(DateTime) ? item.CheckOutDate : myBookings.CheckOutDate;
-                _context.Bookings.Update(myBookings);
-                _context.SaveChanges();
-                return myBookings;
+                var booking = _context.Bookings.ToList();
+                var myBookings = booking.FirstOrDefault(r => r.BookingID == item.BookingID);
+                if (myBookings != null)
+                {
+                    myBookings.BookingID = item.BookingID != 0 ? item.BookingID : myBookings.BookingID;
+                    myBookings.RoomID = item.RoomID != 0 ? item.RoomID : myBookings.RoomID;
+                    myBookings.HotelID = item.HotelID != 0 ? item.HotelID : myBookings.HotelID;
+                    myBookings.BookingID = item.BookingID != 0 ? item.BookingID : myBookings.BookingID;
+                    myBookings.CheckInDate = item.CheckInDate != default(DateTime) ? item.CheckInDate : myBookings.CheckInDate;
+                    myBookings.CheckOutDate = item.CheckOutDate != default(DateTime) ? item.CheckOutDate : myBookings.CheckOutDate;
+                    _context.Bookings.Update(myBookings);
+                    _context.SaveChanges();
+                    return myBookings;
+                }
+                return null;
             }
-            return null;
+            catch (NullReferenceException nre)
+            {
+                throw new InvalidNullReferenceException(nre.Message);
+            }
+            catch (ArgumentNullException ane)
+            {
+                throw new InvalidArgumentNullException(ane.Message);
+            }
+            catch (SqlException se)
+            {
+                throw new InvalidSqlException(se.Message);
+            }
         }
     }
 }

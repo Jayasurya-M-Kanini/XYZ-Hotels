@@ -11,7 +11,7 @@ namespace BookingAPI.Models
         [Required]
         public int HotelID { get; set; }
 
-
+        [MinLength(6, ErrorMessage = "Branch Name should be minimum of 6 characters")]
         public string? HotelBranch { get; set; }
 
         [Required]
@@ -19,6 +19,7 @@ namespace BookingAPI.Models
 
 
         [Required]
+        [MinLength(2, ErrorMessage = "Customer Name should be minimum of 2 characters")]
         public string? CustomerName { get; set; }
 
 

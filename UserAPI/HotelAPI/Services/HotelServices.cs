@@ -82,11 +82,12 @@ namespace HotelAPI.Services
 
 
         //Available rooms Count from each hotel
-        public int RoomCount(IdDTO hotelId)
+        public CountDTO RoomCount(IdDTO hotelId)
         {
             var hotels = _hotelRepo.GetAll().ToList();
-            int roomsCount = hotels.Where(h => h.HotelId == hotelId.Id).Count();
-            return roomsCount;
+            CountDTO countDTO = new CountDTO();
+            countDTO.Count=hotels.Where(h => h.HotelId == hotelId.Id).Count();
+            return  countDTO;
         }
 
         //Filter by location

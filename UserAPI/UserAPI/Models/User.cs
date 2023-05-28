@@ -19,8 +19,10 @@ namespace UserAPI.Models
         [MinLength(2, ErrorMessage = "Name should be minimum of 2 characters")]
         public string Name { get; set; }
 
+        [MinLength(10,ErrorMessage ="Phone Number should be of 10 character")]
         public string? PhoneNumber { get; set; }
 
+        [EmailAddress(ErrorMessage = "Invalid email address")]
         public string? Email { get; set; }
 
         [Required]
@@ -28,6 +30,7 @@ namespace UserAPI.Models
         public int Age { get; set; }
 
         [Required]
+        [MaxLength(8,ErrorMessage = "Role Should be either Staff or Customer")]
         public string Role { get; set; }
     }
 }

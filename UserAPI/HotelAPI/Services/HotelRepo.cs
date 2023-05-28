@@ -1,6 +1,8 @@
-﻿using HotelAPI.Interfaces;
+﻿using HotelAPI.Exceptions.CustomExceptions;
+using HotelAPI.Interfaces;
 using HotelAPI.Models;
 using HotelAPI.Models.DTO;
+using Microsoft.Data.SqlClient;
 using System.Diagnostics;
 
 namespace HotelAPI.Services
@@ -17,16 +19,27 @@ namespace HotelAPI.Services
         {
             try
             {
-                _context.Hotels.Add(item);
-                _context.SaveChanges();
-                return item;
+                var hotel=_context.Hotels.Add(item);
+                if(hotel!= null)
+                {
+                    _context.SaveChanges();
+
+                    return item;
+                }
+                return null;
             }
-            catch (Exception e)
+            catch (NullReferenceException nre)
             {
-                Debug.WriteLine(e.Message);
-                Debug.WriteLine(item);
+                throw new InvalidNullReferenceException(nre.Message);
             }
-            return null;
+            catch (ArgumentNullException ane)
+            {
+                throw new InvalidArgumentNullException(ane.Message);
+            }
+            catch (SqlException se)
+            {
+                throw new InvalidSqlException(se.Message);
+            }
         }
 
         public Hotel Delete(IdDTO idDto)
@@ -34,50 +47,106 @@ namespace HotelAPI.Services
             try
             {
                 var hotel = _context.Hotels.FirstOrDefault(u => u.HotelId == idDto.Id);
-                _context.Hotels.Remove(hotel);
-                _context.SaveChanges();
-                return hotel;
+                if(hotel!= null)
+                {
+                    _context.Hotels.Remove(hotel);
+                    _context.SaveChanges();
+                    return hotel;
+                }
+                return null;
             }
-            catch (Exception e)
+            catch (NullReferenceException nre)
             {
-                Debug.WriteLine(e.Message);
+                throw new InvalidNullReferenceException(nre.Message);
             }
-            return null;
+            catch (ArgumentNullException ane)
+            {
+                throw new InvalidArgumentNullException(ane.Message);
+            }
+            catch (SqlException se)
+            {
+                throw new InvalidSqlException(se.Message);
+            }
         }
 
         public Hotel Get(IdDTO idDto)
         {
-            var hotel = _context.Hotels.FirstOrDefault(u => u.HotelId == idDto.Id);
-            if(hotel == null)
+            try
             {
-                return null;
+                var hotel = _context.Hotels.FirstOrDefault(u => u.HotelId == idDto.Id);
+                if (hotel == null)
+                {
+                    return null;
+                }
+                return hotel;
             }
-            return hotel;
+            catch (NullReferenceException nre)
+            {
+                throw new InvalidNullReferenceException(nre.Message);
+            }
+            catch (ArgumentNullException ane)
+            {
+                throw new InvalidArgumentNullException(ane.Message);
+            }
+            catch (SqlException se)
+            {
+                throw new InvalidSqlException(se.Message);
+            }
         }
 
         public ICollection<Hotel> GetAll()
         {
-            var hotel = _context.Hotels.ToList();
-            if (hotel != null)
-                return hotel;
-            return null;
+            try
+            {
+                var hotel = _context.Hotels.ToList();
+                if (hotel != null)
+                    return hotel;
+                return null;
+            }
+            catch (NullReferenceException nre)
+            {
+                throw new InvalidNullReferenceException(nre.Message);
+            }
+            catch (ArgumentNullException ane)
+            {
+                throw new InvalidArgumentNullException(ane.Message);
+            }
+            catch (SqlException se)
+            {
+                throw new InvalidSqlException(se.Message);
+            }
         }
 
         public Hotel Update(Hotel item)
         {
-            var hotel = _context.Hotels.FirstOrDefault(u => u.HotelId == item.HotelId);
-            if (hotel != null)
+            try
             {
-                hotel.HotelBranch = item.HotelBranch;
-                hotel.HotelPhoneNumber= item.HotelPhoneNumber;
-                hotel.HotelLocation= item.HotelLocation;
-                _context.Hotels.Update(hotel);
-                _context.SaveChanges();
-                return hotel;
+                var hotel = _context.Hotels.FirstOrDefault(u => u.HotelId == item.HotelId);
+                if (hotel != null)
+                {
+                    hotel.HotelBranch = item.HotelBranch;
+                    hotel.HotelPhoneNumber = item.HotelPhoneNumber;
+                    hotel.HotelLocation = item.HotelLocation;
+                    _context.Hotels.Update(hotel);
+                    _context.SaveChanges();
+                    return hotel;
+                }
+                else
+                {
+                    return null;
+                }
             }
-            else
+            catch (NullReferenceException nre)
             {
-                return null;
+                throw new InvalidNullReferenceException(nre.Message);
+            }
+            catch (ArgumentNullException ane)
+            {
+                throw new InvalidArgumentNullException(ane.Message);
+            }
+            catch (SqlException se)
+            {
+                throw new InvalidSqlException(se.Message);
             }
         }
     }

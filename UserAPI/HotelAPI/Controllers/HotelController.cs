@@ -1,4 +1,5 @@
-﻿using HotelAPI.Models;
+﻿using HotelAPI.Exceptions.CustomExceptions;
+using HotelAPI.Models;
 using HotelAPI.Models.DTO;
 using HotelAPI.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -25,37 +26,78 @@ namespace HotelAPI.Controllers
         [Authorize]
         public ActionResult<Hotel> AddHotel(Hotel hotel)
         {
-            Hotel newHotel = _hotelServices.AddHotel(hotel);
-            if (newHotel == null)
-                return BadRequest("Unable to add Hotel");
-            return Created("Hotel Added Successfully", newHotel);
+            try
+            {
+                Hotel newHotel = _hotelServices.AddHotel(hotel);
+                if (newHotel == null)
+                    return BadRequest(new Error(1,"Unable to add Hotel"));
+                return Created("Hotel Added Successfully", newHotel);
+            }
+            catch (InvalidArgumentNullException iane)
+            {
+                return BadRequest(new Error(2, iane.Message));
+            }
+            catch (InvalidNullReferenceException inre)
+            {
+                return BadRequest(new Error(3, inre.Message));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new Error(4, ex.Message));
+            }
         }
 
         [ProducesResponseType(typeof(Hotel), StatusCodes.Status200OK)]//Success Response
         [ProducesResponseType(StatusCodes.Status404NotFound)]//Failure Response
         [HttpGet("View Available Hotels")]
-        [Authorize]
         public ActionResult<List<Hotel>> GetAllHotel()
         {
-            var hotels = _hotelServices.GetAllHotels();
-            if (hotels != null)
-                return Ok(hotels);
-            //return NotFound(new Error(4, "No Rooms available"));
-            return NotFound("No Hotels available");
+            try
+            {
+                var hotels = _hotelServices.GetAllHotels();
+                if (hotels != null)
+                    return Ok(hotels);
+                return NotFound(new Error(1,"No Hotels available"));
+            }
+            catch (InvalidArgumentNullException iane)
+            {
+                return BadRequest(new Error(2, iane.Message));
+            }
+            catch (InvalidNullReferenceException inre)
+            {
+                return BadRequest(new Error(3, inre.Message));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new Error(4, ex.Message));
+            }
         }
 
 
         [ProducesResponseType(typeof(Hotel), StatusCodes.Status200OK)]//Success Response
         [ProducesResponseType(StatusCodes.Status404NotFound)]//Failure Response
         [HttpPost("View Hotel by HotelID")]
-        [Authorize]
         public ActionResult<Hotel> GetHotelByID(IdDTO idDTO)
         {
-            var hotel = _hotelServices.GetHotelById(idDTO);
-            if (hotel != null)
-                return Ok(hotel);
-            //return NotFound(new Error(4, "No Rooms available"));
-            return NotFound("No Hotel available");
+            try
+            {
+                var hotel = _hotelServices.GetHotelById(idDTO);
+                if (hotel != null)
+                    return Ok(hotel);
+                return NotFound("No Hotel available");
+            }
+            catch (InvalidArgumentNullException iane)
+            {
+                return BadRequest(new Error(2, iane.Message));
+            }
+            catch (InvalidNullReferenceException inre)
+            {
+                return BadRequest(new Error(3, inre.Message));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new Error(4, ex.Message));
+            }
         }
 
 
@@ -66,11 +108,25 @@ namespace HotelAPI.Controllers
         [Authorize]
         public ActionResult<Hotel> DelteHotelByID(IdDTO idDTO)
         {
-            var hotel = _hotelServices.DeleteHotel(idDTO);
-            if (hotel != null)
-                return Ok(hotel);
-            //return NotFound(new Error(4, "No Rooms available"));
-            return NotFound("No Hotel available");
+            try
+            {
+                var hotel = _hotelServices.DeleteHotel(idDTO);
+                if (hotel != null)
+                    return Ok(hotel);
+                return NotFound(new Error(1,"No Hotel available"));
+            }
+            catch (InvalidArgumentNullException iane)
+            {
+                return BadRequest(new Error(2, iane.Message));
+            }
+            catch (InvalidNullReferenceException inre)
+            {
+                return BadRequest(new Error(3, inre.Message));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new Error(4, ex.Message));
+            }
         }
 
         [ProducesResponseType(typeof(Hotel), StatusCodes.Status200OK)]//Success Response
@@ -80,11 +136,25 @@ namespace HotelAPI.Controllers
         [Authorize]
         public ActionResult<Hotel> UpdateHotel(Hotel hotel)
         {
-            var myhotel = _hotelServices.Update(hotel);
-            if (myhotel != null)
-                return Ok(myhotel);
-            //return NotFound(new Error(4, "No Rooms available"));
-            return NotFound("Hotel Not updated");
+            try
+            {
+                var myhotel = _hotelServices.Update(hotel);
+                if (myhotel != null)
+                    return Ok(myhotel);
+                return NotFound(new Error(1,"Hotel Not updated"));
+            }
+            catch (InvalidArgumentNullException iane)
+            {
+                return BadRequest(new Error(2, iane.Message));
+            }
+            catch (InvalidNullReferenceException inre)
+            {
+                return BadRequest(new Error(3, inre.Message));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new Error(4, ex.Message));
+            }
         }
 
 
@@ -95,64 +165,130 @@ namespace HotelAPI.Controllers
         [Authorize]
         public ActionResult<Rooms> AddRoom(Rooms room)
         {
-            var myroom = _hotelServices.AddRoom(room);
-            if (myroom != null)
-                return Created("Room created Successfully", myroom);
-            //return BadRequest(new Error(2, "Unable to add Room"));
-            return BadRequest("Unable to add Room");
+            try
+            {
+                var myroom = _hotelServices.AddRoom(room);
+                if (myroom != null)
+                    return Created("Room created Successfully", myroom);
+                return BadRequest("Unable to add Room");
+            }
+            catch (InvalidArgumentNullException iane)
+            {
+                return BadRequest(new Error(2, iane.Message));
+            }
+            catch (InvalidNullReferenceException inre)
+            {
+                return BadRequest(new Error(3, inre.Message));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new Error(4, ex.Message));
+            }
         }
 
         [ProducesResponseType(typeof(Rooms), StatusCodes.Status200OK)]//Success Response
         [ProducesResponseType(StatusCodes.Status404NotFound)]//Failure Response
         [HttpGet("View All Available Rooms")]
-        [Authorize]
         public ActionResult<List<Rooms>> GetAllRooms()
         {
-            var myroom = _hotelServices.GetAllRooms();
-            if (myroom != null)
-                return Ok(myroom);
-            //return BadRequest(new Error(2, "Unable to add Room"));
-            return BadRequest("Unable to add Room");
+            try
+            {
+                var myroom = _hotelServices.GetAllRooms();
+                if (myroom != null)
+                    return Ok(myroom);
+                return BadRequest(new Error(1,"Unable to add Room"));
+            }
+            catch (InvalidArgumentNullException iane)
+            {
+                return BadRequest(new Error(2, iane.Message));
+            }
+            catch (InvalidNullReferenceException inre)
+            {
+                return BadRequest(new Error(3, inre.Message));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new Error(4, ex.Message));
+            }
         }
 
 
         [ProducesResponseType(typeof(Rooms), StatusCodes.Status200OK)]//Success Response
         [ProducesResponseType(StatusCodes.Status404NotFound)]//Failure Response
         [HttpPost("View Rooms By Hotel ID")]
-        [Authorize]
         public ActionResult<List<Rooms>> ViewRoomsByHotelID(IdDTO idDTO)
         {
-            var rooms = _hotelServices.GetRoomByHotelID(idDTO);
-            if (rooms != null)
-                return Ok(rooms);
-            //return NotFound(new Error(4, "No Rooms available"));
-            return BadRequest("No available rooms");
+            try
+            {
+                var rooms = _hotelServices.GetRoomByHotelID(idDTO);
+                if (rooms != null)
+                    return Ok(rooms);
+                return BadRequest(new Error(1,"No available rooms"));
+            }
+            catch (InvalidArgumentNullException iane)
+            {
+                return BadRequest(new Error(2, iane.Message));
+            }
+            catch (InvalidNullReferenceException inre)
+            {
+                return BadRequest(new Error(3, inre.Message));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new Error(4, ex.Message));
+            }
         }
 
         [ProducesResponseType(typeof(Hotel), StatusCodes.Status200OK)]//Success Response
         [ProducesResponseType(StatusCodes.Status404NotFound)]//Failure Response
         [HttpPost("Search Hotel by Location")]
-        [Authorize]
         public ActionResult<List<Hotel>> SearchHotelByLocation(LocationSearchDTO locationDTO)
         {
-            var hotels = _hotelServices.FilterHotelByLocation(locationDTO);
-            if (hotels != null)
-                return Ok(hotels);
-            //return NotFound(new Error(4, "No Rooms available"));
-            return NotFound("No Hotels available in this location");
+            try
+            {
+                var hotels = _hotelServices.FilterHotelByLocation(locationDTO);
+                if (hotels != null)
+                    return Ok(hotels);
+                return NotFound(new Error(1, "No Hotels available in this location"));
+            }
+            catch (InvalidArgumentNullException iane)
+            {
+                return BadRequest(new Error(2, iane.Message));
+            }
+            catch (InvalidNullReferenceException inre)
+            {
+                return BadRequest(new Error(3, inre.Message));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new Error(4, ex.Message));
+            }
         }
 
         [ProducesResponseType(typeof(Rooms), StatusCodes.Status200OK)]//Success Response
         [ProducesResponseType(StatusCodes.Status404NotFound)]//Failure Response
         [HttpPost("Search Hotel by Branch")]
-        [Authorize]
         public ActionResult<List<Rooms>> GetRoomsByHotelBranch(BranchSearchDTO branchDTO)
         {
-            var rooms = _hotelServices.SearchRoomsByHotelBranch(branchDTO);
-            if (rooms != null)
-                return Ok(rooms);
-            //return NotFound(new Error(4, "No Rooms available"));
-            return NotFound("No Rooms available");
+            try
+            {
+                var rooms = _hotelServices.SearchRoomsByHotelBranch(branchDTO);
+                if (rooms != null)
+                    return Ok(rooms);
+                return NotFound(new Error(1, "No Rooms available"));
+            }
+            catch (InvalidArgumentNullException iane)
+            {
+                return BadRequest(new Error(2, iane.Message));
+            }
+            catch (InvalidNullReferenceException inre)
+            {
+                return BadRequest(new Error(3, inre.Message));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new Error(4, ex.Message));
+            }
 
         }
 
@@ -160,28 +296,54 @@ namespace HotelAPI.Controllers
         [ProducesResponseType(typeof(Rooms), StatusCodes.Status200OK)]//Success Response
         [ProducesResponseType(StatusCodes.Status404NotFound)]//Failure Response
         [HttpPost("Filter Rooms by Type")]
-        [Authorize]
         public ActionResult<List<Rooms>> FilterRoomsByType(RoomTypeDTO roomType)
         {
-            var rooms = _hotelServices.FilterRoomByType(roomType);
-            if (rooms != null)
-                return Ok(rooms);
-            //return NotFound(new Error(4, "No Rooms available"));
-            return NotFound("No Rooms available");
+            try
+            {
+                var rooms = _hotelServices.FilterRoomByType(roomType);
+                if (rooms != null)
+                    return Ok(rooms);
+                return NotFound(new Error(1, "No Rooms available"));
+            }
+            catch (InvalidArgumentNullException iane)
+            {
+                return BadRequest(new Error(2, iane.Message));
+            }
+            catch (InvalidNullReferenceException inre)
+            {
+                return BadRequest(new Error(3, inre.Message));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new Error(4, ex.Message));
+            }
 
         }
 
         [ProducesResponseType(typeof(Rooms), StatusCodes.Status200OK)]//Success Response
         [ProducesResponseType(StatusCodes.Status404NotFound)]//Failure Response
         [HttpPost("Filter Rooms by Sharing")]
-        [Authorize]
         public ActionResult<List<Rooms>> FilterRoomsBySharing(RoomSharingDTO roomSharing)
         {
-            var rooms = _hotelServices.FilterRoomBySharing(roomSharing);
-            if (rooms != null)
-                return Ok(rooms);
-            //return NotFound(new Error(4, "No Rooms available"));
-            return NotFound("No Rooms available");
+            try
+            {
+                var rooms = _hotelServices.FilterRoomBySharing(roomSharing);
+                if (rooms != null)
+                    return Ok(rooms);
+                return NotFound(new Error(1, "No Rooms available"));
+            }
+            catch (InvalidArgumentNullException iane)
+            {
+                return BadRequest(new Error(2, iane.Message));
+            }
+            catch (InvalidNullReferenceException inre)
+            {
+                return BadRequest(new Error(3, inre.Message));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new Error(4, ex.Message));
+            }
         }
 
 
@@ -189,28 +351,55 @@ namespace HotelAPI.Controllers
         [ProducesResponseType(typeof(PriceFilteredDataDTO), StatusCodes.Status200OK)]//Success Response
         [ProducesResponseType(StatusCodes.Status404NotFound)]//Failure Response
         [HttpPost("Filter Rooms by Price")]
-        [Authorize]
         public ActionResult<List<PriceFilteredDataDTO>> FilterRoomsByPriceWithoutID(PriceRangeDTO priceRange)
         {
-            var rooms = _hotelServices.FilterRoomByPriceWithoutID(priceRange);
-            if (rooms != null)
-                return Ok(rooms);
-            //return NotFound(new Error(4, "No Rooms available"));
-            return NotFound("No Rooms available");
+            try
+            {
+                var rooms = _hotelServices.FilterRoomByPriceWithoutID(priceRange);
+                if (rooms != null)
+                    return Ok(rooms);
+                return NotFound(new Error(1, "No Rooms available"));
+            }
+            catch (InvalidArgumentNullException iane)
+            {
+                return BadRequest(new Error(2, iane.Message));
+            }
+            catch (InvalidNullReferenceException inre)
+            {
+                return BadRequest(new Error(3, inre.Message));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new Error(4, ex.Message));
+            }
         }
 
 
         [ProducesResponseType(typeof(Rooms), StatusCodes.Status200OK)]//Success Response
         [ProducesResponseType(StatusCodes.Status404NotFound)]//Failure Response
         [HttpPost("Available Rooms Count")]
-        [Authorize]
-        public ActionResult<int> GetAvailableRoomsCount(IdDTO idDTO)
+        public ActionResult<CountDTO> GetAvailableRoomsCount(IdDTO idDTO)
         {
-            int roomsCount = _hotelServices.RoomCount(idDTO);
-            if (roomsCount >= 0)
-                return Ok(roomsCount);
-            //return NotFound(new Error(4, "No Rooms available"));
-            return NotFound("No Rooms available");
+            try
+            {
+                CountDTO countDTO=new CountDTO();
+                countDTO= _hotelServices.RoomCount(idDTO);
+                if (countDTO.Count >= 0)
+                    return Ok(countDTO);
+                return NotFound(new Error(1, "No Rooms available"));
+            }
+            catch (InvalidArgumentNullException iane)
+            {
+                return BadRequest(new Error(2, iane.Message));
+            }
+            catch (InvalidNullReferenceException inre)
+            {
+                return BadRequest(new Error(3, inre.Message));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new Error(4, ex.Message));
+            }
         }
     }
 }

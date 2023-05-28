@@ -1,4 +1,6 @@
-﻿using System.Diagnostics;
+﻿using Microsoft.Data.SqlClient;
+using System.Diagnostics;
+using UserAPI.Exceptions.CustomExceptions;
 using UserAPI.Interfaces;
 using UserAPI.Models;
 
@@ -17,16 +19,31 @@ namespace UserAPI.Services
         {
             try
             {
-                _context.Users.Add(item);
-                _context.SaveChanges();
-                return item;
+                var user = _context.Users;
+                var myUser=user.SingleOrDefault(u => u.Username== item.Username);
+                if (myUser!=null)
+                {
+                    return null;
+                }
+                else
+                {
+                    _context.Users.Add(item);
+                    _context.SaveChanges();
+                    return item;
+                }
             }
-            catch (Exception e)
+            catch (NullReferenceException nre)
             {
-                Debug.WriteLine(e.Message);
-                Debug.WriteLine(item);
-            } 
-            return null;
+                throw new InvalidNullReferenceException(nre.Message);
+            }
+            catch (ArgumentNullException ane)
+            {
+                throw new InvalidArgumentNullException(ane.Message);
+            }
+            catch (SqlException se)
+            {
+                throw new InvalidSqlException(se.Message);
+            }
         }
 
         public User Delete(int id)
@@ -34,48 +51,108 @@ namespace UserAPI.Services
             try
             {
                 var user = _context.Users.FirstOrDefault(u => u.UserId == id);
-                _context.Users.Remove(user);
-                _context.SaveChanges();
-                return user;
+                if (user!=null)
+                {
+                    _context.Users.Remove(user);
+                    _context.SaveChanges();
+                    return user;
+                }
+                return null;
             }
-            catch (Exception e)
+            catch (NullReferenceException nre)
             {
-                Debug.WriteLine(e.Message);
+                throw new InvalidNullReferenceException(nre.Message);
             }
-            return null;
+            catch (ArgumentNullException ane)
+            {
+                throw new InvalidArgumentNullException(ane.Message);
+            }
+            catch (SqlException se)
+            {
+                throw new InvalidSqlException(se.Message);
+            }
         }
 
         public User Get(int id)
         {
-            var user = _context.Users.FirstOrDefault(u => u.UserId == id);
-            return user;
+            try
+            {
+                var user = _context.Users.FirstOrDefault(u => u.UserId == id);
+                if (user != null)
+                {
+                    return user;
+                }
+                return null;
+            }
+            catch (NullReferenceException nre)
+            {
+                throw new InvalidNullReferenceException(nre.Message);
+            }
+            catch (ArgumentNullException ane)
+            {
+                throw new InvalidArgumentNullException(ane.Message);
+            }
+            catch (SqlException se)
+            {
+                throw new InvalidSqlException(se.Message);
+            }
         }
 
         public ICollection<User> GetAll()
         {
-            var user= _context.Users.ToList();
-            if (user.Count > 0)
-                return user; 
-            return null;
+            try
+            {
+                var user = _context.Users.ToList();
+                if (user != null)
+                    return user;
+                return null;
+            }
+            catch(NullReferenceException nre)
+            {
+                throw new InvalidNullReferenceException(nre.Message);
+            }
+            catch(ArgumentNullException ane)
+            {
+                throw new InvalidArgumentNullException(ane.Message);
+            }
+            catch (SqlException se)
+            {
+                throw new InvalidSqlException(se.Message);
+            }
         }
 
         public User Update(User item)
         {
-            var user = _context.Users.FirstOrDefault(u => u.Username == item.Username);
-            if (user != null)
+            try
             {
-                user.Password=item.Password;
-                user.Name=item.Name;
-                user.Email=item.Email;
-                user.PhoneNumber=item.PhoneNumber;
-                user.Age=item.Age;
-                _context.Users.Update(user);
-                _context.SaveChanges();
-                return user;
+                var user = _context.Users.FirstOrDefault(u => u.Username == item.Username);
+                if (user != null)
+                {
+                    user.Password = item.Password;
+                    user.Name = item.Name;
+                    user.Email = item.Email;
+                    user.PhoneNumber = item.PhoneNumber;
+                    user.Age = item.Age;
+                    _context.Users.Update(user);
+                    _context.SaveChanges();
+                    return user;
+                }
+                else
+                {
+                    return null;
+                }
             }
-            else
+            catch (NullReferenceException nre)
             {
-                return null;
+                throw new InvalidNullReferenceException(nre.Message);
+            }
+            catch (ArgumentNullException ane)
+            {
+                throw new InvalidArgumentNullException(ane.Message);
+            }
+            catch (SqlException se)
+            {
+                throw new InvalidSqlException(se.Message);
             }
         }
     }
