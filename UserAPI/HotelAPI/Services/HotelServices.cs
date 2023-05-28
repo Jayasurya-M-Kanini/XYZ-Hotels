@@ -1,20 +1,23 @@
 ﻿using HotelAPI.Interfaces;
 using HotelAPI.Models;
 using HotelAPI.Models.DTO;
+using Microsoft.AspNetCore.Mvc;
 
 namespace HotelAPI.Services
 {
     public class HotelServices
     {
-        private readonly IBaseCRUD<int, Hotel> _hotelRepo;
-        private readonly IBaseCRUD<int, Rooms> _roomRepo;
+        private readonly IBaseCRUD<IdDTO, Hotel> _hotelRepo;
+        private readonly IBaseCRUD<IdDTO, Rooms> _roomRepo;
 
-        public HotelServices(IBaseCRUD<int, Hotel> hotelRepo, IBaseCRUD<int, Rooms> roomRepo)
+        public HotelServices(IBaseCRUD<IdDTO, Hotel> hotelRepo, IBaseCRUD<IdDTO, Rooms> roomRepo)
         {
             _hotelRepo = hotelRepo;
             _roomRepo = roomRepo;
         }
 
+
+     //Hotel crud operation
 
     public Hotel AddHotel(Hotel hotel)
     {
@@ -35,7 +38,7 @@ namespace HotelAPI.Services
 
         public Hotel GetHotelById(IdDTO hotelId)
         {
-            var hotels = _hotelRepo.Get(hotelId.Id);
+            var hotels = _hotelRepo.Get(hotelId);
             if (hotels != null)
                 return hotels;
             return null;
@@ -43,7 +46,7 @@ namespace HotelAPI.Services
 
         public Hotel DeleteHotel(IdDTO hotelId)
         {
-            var hotels = _hotelRepo.Delete(hotelId.Id);
+            var hotels = _hotelRepo.Delete(hotelId);
             if (hotels != null)
                 return hotels;
             return null;
@@ -57,6 +60,8 @@ namespace HotelAPI.Services
             return null;
         }
 
+
+        //Room Functionalities 
         public Rooms AddRoom(Rooms room)
         {
         var hotels = _hotelRepo.GetAll();
@@ -75,7 +80,8 @@ namespace HotelAPI.Services
             return null;
         }
 
-        //Available rooms from each hotel
+
+        //Available rooms Count from each hotel
         public int RoomCount(IdDTO hotelId)
         {
             var hotels = _hotelRepo.GetAll().ToList();
@@ -88,31 +94,91 @@ namespace HotelAPI.Services
         {
             var hotels = _hotelRepo.GetAll().ToList();
             var myHotels = hotels.Where(h => h.HotelLocation == locationDTO.Location).ToList();
-            if (myHotels.Count > 0)
+            if (myHotels!=null)
                 return myHotels;
             return null;
         }
 
         //Search by Hotel branch
-        public List<Rooms> SearchHotelByBranch(BranchSearchDTO branchDTO)
+        public List<Rooms>? SearchRoomsByHotelBranch(BranchSearchDTO branchDTO)
         {
             var hotels= _hotelRepo.GetAll().ToList();
             var rooms = _roomRepo.GetAll().ToList();
-            var myHotel = hotels.FirstOrDefault(h => h.HotelBranch == branchDTO.Branch); 
-            var myRooms = rooms.Where(r => r.HotelId == myHotel.HotelId).ToList();
+            var myHotel = hotels.FirstOrDefault(h => h.HotelBranch == branchDTO.Branch);
+            List<Rooms>? myRooms =null;
+            if (myHotel != null)
+            {
+                myRooms = rooms.Where(r => r.HotelId == myHotel.HotelId).ToList();
+            }
+            if (myRooms != null)
+                return myRooms;
+            return null;
+        }
+
+        //Filter rooms by hotel ID
+        public List<Rooms> GetRoomByHotelID(IdDTO hotelId)
+        {
+            var rooms = _roomRepo.GetAll().ToList();
+            var myRooms = rooms.Where(h => h.HotelId == hotelId.Id).ToList();
+            return myRooms;
+        }
+
+        //Filter Room by type
+        public List<Rooms> FilterRoomByType(RoomTypeDTO typeDTO)
+        {
+            var rooms = _roomRepo.GetAll().ToList();
+            var myRooms = rooms.Where(h => h.HotelId == typeDTO.Id && h.Type==typeDTO.RoomType).ToList();
             if (myRooms.Count > 0)
                 return myRooms;
             return null;
         }
 
-        //Filter Room by type
-        public List<Rooms> FilterRoomByType(IdDTO hotelId,RoomTypeDTO typeDTO)
+        //Filter Room by sharing
+        public List<Rooms> FilterRoomBySharing(RoomSharingDTO roomSharing)
         {
             var rooms = _roomRepo.GetAll().ToList();
-            var myRooms = rooms.Where(h => h.HotelId == hotelId.Id && h.Type==typeDTO.RoomType).ToList();
+            var myRooms = rooms.Where(h => h.HotelId == roomSharing.ID && h.Sharing == roomSharing.sharing).ToList();
             if (myRooms.Count > 0)
                 return myRooms;
             return null;
         }
+
+
+        //Sort By Price Range without Hotel ID
+        public List<PriceFilteredDataDTO> FilterRoomByPriceWithoutID(PriceRangeDTO priceRange)
+        {
+            var rooms = _roomRepo.GetAll().ToList();             
+            PriceFilteredDataDTO priceFilteredData = null;
+            List<PriceFilteredDataDTO> priceFilteredDatas = new List<PriceFilteredDataDTO>();
+            if (rooms.Count > 0)
+            {
+                    foreach (var room in rooms)
+                    {
+                        IdDTO idDTO=new IdDTO();
+                        idDTO.Id = room.HotelId;
+                        var myHotel = _hotelRepo.Get(idDTO);
+                        priceFilteredData = new PriceFilteredDataDTO();
+                        priceFilteredData.HotelId = myHotel.HotelId;
+                        priceFilteredData.HotelBranch = myHotel.HotelBranch;
+                        priceFilteredData.HotelPhoneNumber = myHotel.HotelPhoneNumber;
+                        priceFilteredData.HotelLocation = myHotel.HotelLocation;
+                        priceFilteredData.HotelRating = myHotel.HotelRating;
+
+                        priceFilteredData.RoomId = room.RoomId;
+                        priceFilteredData.Price = room.Price;
+                        priceFilteredData.Type = room.Type;
+                        priceFilteredData.Sharing = room.Sharing;
+
+                        priceFilteredDatas.Add(priceFilteredData);
+                    }
+                }
+            else
+                return null;
+
+            if (priceFilteredDatas.Count > 0)
+                return priceFilteredDatas;
+            return null;
+        }
+
     }
 }

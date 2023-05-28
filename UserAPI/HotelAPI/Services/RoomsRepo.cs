@@ -57,7 +57,7 @@ namespace HotelAPI.Services
         public ICollection<Rooms> GetAll()
         {
             var rooms = _context.Room.ToList();
-            if (rooms.Count > 0)
+            if (rooms != null )
                 return rooms;
             return null;
         }

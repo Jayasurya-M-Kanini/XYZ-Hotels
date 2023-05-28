@@ -44,7 +44,7 @@ namespace HotelAPI.Migrations
 
                     b.HasKey("HotelId");
 
-                    b.ToTable("Hotels");
+                    b.ToTable("Hotels", (string)null);
                 });
 
             modelBuilder.Entity("HotelAPI.Models.Rooms", b =>
@@ -71,7 +71,7 @@ namespace HotelAPI.Migrations
 
                     b.HasIndex("HotelId");
 
-                    b.ToTable("Room");
+                    b.ToTable("Room", (string)null);
                 });
 
             modelBuilder.Entity("HotelAPI.Models.Rooms", b =>

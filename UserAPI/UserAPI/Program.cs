@@ -46,18 +46,18 @@ namespace UserAPI
 
             // Configure the role based authentication
 
-            builder.Services.AddAuthorization(options =>
-                    {
-                        options.AddPolicy("StaffOnly", policy =>
-                        {
-                            policy.RequireRole("Staff");
-                        });
+            //builder.Services.AddAuthorization(options =>
+            //        {
+            //            options.AddPolicy("StaffOnly", policy =>
+            //            {
+            //                policy.RequireRole("Staff");
+            //            });
 
-                        options.AddPolicy("CustomerOnly", policy =>
-                        {
-                            policy.RequireRole("Customer");
-                        });
-                    });
+            //            options.AddPolicy("CustomerOnly", policy =>
+            //            {
+            //                policy.RequireRole("Customer");
+            //            });
+            //        });
 
             // Configure the Authorization button in swagger ui.
 
